@@ -1,23 +1,21 @@
-name: Sync to Hugging Face hub
+name: Deploy to Hugging Face Spaces
+
 on:
   push:
     branches: [main]
 
-  # to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
 jobs:
-  sync-to-hub:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Add remote 
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Push to Hugging Face Spaces
         env:
-          HF: ${{ secrets.HF }}
-        run: git remote add space https://noahgift:$HF@huggingface.co/spaces/noahgift/demo
-      - name: Push to hub
-        env:
-          HF: ${{ secrets.HF }}
-        run: git push --force https://noahgift:$HF@huggingface.co/spaces/noahgift/demo main
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git config --global user.email "pouyan.rafieifard@gmail.com"
+          git config --global user.name "pouyanrafieifard"
+          git remote add space https://huggingface_hub:${HF_TOKEN}@huggingface.co/spaces/pouyanrafieifard/summarization-app
+          git push space main --force
